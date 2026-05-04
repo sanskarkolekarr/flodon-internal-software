@@ -8,6 +8,10 @@ export const CHANNELS = {
   milestones: process.env.CHANNEL_MILESTONES,
 }
 
+export const ROLES = {
+  sales: process.env.ROLE_SALES || 'sales',
+}
+
 export const MILESTONES = [
   { amount: 10000,   name: '10K MRR',   emoji: '🎯' },
   { amount: 25000,   name: '25K MRR',   emoji: '🚀' },

@@ -6,10 +6,13 @@ import { fileURLToPath, pathToFileURL } from 'url'
 import { dirname, join } from 'path'
 import { readdirSync } from 'fs'
 import http from 'http'
-import { supabase, CHANNELS, buildWebLeadEmbed, buildWebhookCancelEmbed, updateWarRoom, log } from '@flodon/core'
+import { supabase, CHANNELS, ROLES, buildWebLeadEmbed, buildWebhookCancelEmbed, updateWarRoom, log } from '@flodon/core'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PORT = process.env.API_PORT || 10001
+
+// Helper to format Role Pings
+const tagRole = (roleId) => roleId.startsWith('<@&') ? roleId : `<@&${roleId}>`
 
 http.createServer(async (req, res) => {
   const { method, url, headers } = req
@@ -50,14 +53,14 @@ http.createServer(async (req, res) => {
         // 1. Raw Lead / Booking Payload
         if (endpoint === 'lead' && payload.name && !payload.embeds) {
           messageOptions = {
-            content: 'NEW BOOKING\n<@sales>',
+            content: `NEW BOOKING\n${tagRole(ROLES.sales)}`,
             embeds: [buildWebLeadEmbed(payload)]
           }
         } 
         // 2. Raw Cancellation Payload
         else if (endpoint === 'cancel' && payload.name && !payload.embeds) {
           messageOptions = {
-            content: 'CALL CANCELLED\n<@sales>',
+            content: `CALL CANCELLED\n${tagRole(ROLES.sales)}`,
             embeds: [buildWebhookCancelEmbed(payload)]
           }
         }

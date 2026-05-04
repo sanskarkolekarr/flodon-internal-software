@@ -29,14 +29,14 @@ export function buildWebLeadEmbed(lead) {
 
     q.businessDescription ? { name: 'BUSINESS OVERVIEW', value: `> ${q.businessDescription}`, inline: false } : null,
     
-    q.monthlyRevenue ? { name: 'CURRENT REVENUE', value: `**${q.monthlyRevenue}**`, inline: true },
-    q.investmentLevel ? { name: 'TARGET BUDGET', value: `**${q.investmentLevel}**`, inline: true },
+    q.monthlyRevenue ? { name: 'CURRENT REVENUE', value: `**${q.monthlyRevenue}**`, inline: true } : null,
+    q.investmentLevel ? { name: 'TARGET BUDGET', value: `**${q.investmentLevel}**`, inline: true } : null,
     
     // Line break
     { name: '\u200B', value: '\u200B', inline: false },
 
-    q.readyToImplement ? { name: 'IMPLEMENTATION', value: `**${q.readyToImplement}**`, inline: true },
-    q.decisionMaker ? { name: 'DECISION MAKER', value: `**${q.decisionMaker}**`, inline: true },
+    q.readyToImplement ? { name: 'IMPLEMENTATION', value: `**${q.readyToImplement}**`, inline: true } : null,
+    q.decisionMaker ? { name: 'DECISION MAKER', value: `**${q.decisionMaker}**`, inline: true } : null,
 
     (date !== 'N/A') ? {
       name: 'APPOINTMENT SCHEDULE',
