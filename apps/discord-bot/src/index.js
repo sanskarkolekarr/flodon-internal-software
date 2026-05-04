@@ -9,7 +9,7 @@ import http from 'http'
 import { supabase, CHANNELS, ROLES, buildWebLeadEmbed, buildWebhookCancelEmbed, updateWarRoom, log } from '@flodon/core'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const PORT = process.env.BOT_PORT || 10000
+const PORT = process.env.BOT_PORT || 10010
 const PREFIX = '!'
 
 // Helper to format Role Pings
@@ -164,14 +164,14 @@ client.on('messageCreate', async message => {
   const command = client.commands.get(commandName)
   if (!command) return
 
-  // Mock an interaction-like object for compatibility where possible
-  // NOTE: This only works for simple commands that only use interaction.reply()
-  // More complex commands (modals, options) still need /slash usage.
+  // Mock an interaction-like object for compatibility
   const mockInteraction = {
     guild: message.guild,
     channel: message.channel,
     user: message.author,
     member: message.member,
+    isPrefix: true, // Flag to help commands know they are in prefix mode
+    deferReply: async () => true, // Mock defer for prefix mode
     reply: async (options) => {
       if (typeof options === 'string') return message.reply(options)
       return message.reply(options)
@@ -180,10 +180,15 @@ client.on('messageCreate', async message => {
       if (typeof options === 'string') return message.reply(options)
       return message.reply(options)
     },
+    editReply: async (options) => {
+      // In prefix mode, we just send a new message or rely on the previous reply
+      if (typeof options === 'string') return message.reply(options)
+      return message.reply(options)
+    },
     options: {
-      getString: (name) => null, // Placeholder for prefix args if needed
-      getInteger: (name) => null,
-      getNumber: (name) => null,
+      getString: (name) => args[0] || null, // Basic arg support for !leads <search>
+      getInteger: (name) => parseInt(args[0]) || null,
+      getNumber: (name) => parseFloat(args[0]) || null,
     }
   }
 
