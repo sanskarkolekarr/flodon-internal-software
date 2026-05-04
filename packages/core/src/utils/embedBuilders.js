@@ -49,6 +49,8 @@ export function buildWebhookCancelEmbed(payload) {
     color: 0x000000, 
     fields: [
       { name: 'Name', value: payload.name || 'N/A', inline: false },
+      { name: 'Email', value: payload.email || 'N/A', inline: false },
+      { name: 'Phone', value: payload.phone || payload.phone_number || 'N/A', inline: false },
       { name: 'Date & Time', value: `${payload.date || 'N/A'} | ${payload.startTime || 'N/A'}`, inline: false },
       { name: 'Reason', value: payload.reason || 'N/A', inline: false },
     ],
