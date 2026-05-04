@@ -7,34 +7,31 @@
  * Surfaces qualification signals so agents can prep for the call instantly.
  */
 export function buildWebLeadEmbed(lead) {
-  const q = lead.qualification || {}
+  // Normalize data (check both top-level and nested qualification object)
+  const q = lead.qualification || lead || {}
+  const name = lead.name || 'N/A'
+  const email = lead.email || 'N/A'
+  const phone = lead.phone || lead.phone_number || 'N/A'
+  const website = lead.website || q.website || lead.source_url || 'N/A'
+  
+  // Dates/Times
+  const date = lead.date || lead.booked_date || 'N/A'
+  const start = lead.startTime || lead.booked_start || 'N/A'
+  const end = lead.endTime || lead.booked_end || ''
 
   // Hot lead = ready to move forward AND has set an investment level
-  const isHot = q.readyToMoveForward === 'Yes' && q.investmentLevel
-
-  // Format booked call time if present
-  let callField = null
-  if (lead.booked_date && lead.booked_start) {
-    callField = {
-      name: '📅 Booked Call',
-      value: `**${lead.booked_date}** · ${lead.booked_start}${lead.booked_end ? ` – ${lead.booked_end}` : ''}`,
-      inline: false,
-    }
-  }
+  const isHot = (q.readyToMoveForward === 'Yes' || lead.readyToImplement === 'Immediately') && (q.investmentLevel || q.monthlyRevenue)
 
   const fields = [
     // Contact info
-    {
-      name: '📧 Email',
-      value: lead.email || 'N/A',
-      inline: true,
-    },
-    lead.phone ? { name: '📱 Phone', value: lead.phone, inline: true } : null,
-    lead.source_url ? { name: '🔗 Website', value: q.website || lead.source_url, inline: true } : null,
+    { name: '📧 Email', value: email, inline: true },
+    { name: '📱 Phone', value: phone, inline: true },
+    { name: '🔗 Website', value: website, inline: true },
 
     // Separator
     { name: '\u200B', value: '━━━ QUALIFICATION INTEL ━━━', inline: false },
 
+    q.businessDescription ? { name: '📝 Business', value: q.businessDescription, inline: false } : null,
     q.monthlyRevenue ? { name: '💰 Monthly Revenue', value: q.monthlyRevenue, inline: true } : null,
     q.averageDealSize ? { name: '🎯 Avg Deal Size', value: q.averageDealSize, inline: true } : null,
     q.investmentLevel ? { name: '💳 Investment Level', value: q.investmentLevel, inline: true } : null,
@@ -45,14 +42,19 @@ export function buildWebLeadEmbed(lead) {
     q.readyToImplement ? { name: '⏱️ Timeline', value: q.readyToImplement, inline: true } : null,
     q.decisionMaker ? { name: '🤝 Decision Maker', value: q.decisionMaker, inline: true } : null,
     q.readyToMoveForward ? { name: '✅ Ready to Move', value: q.readyToMoveForward, inline: true } : null,
+    q.currentLeadSources ? { name: '📡 Current Sources', value: q.currentLeadSources, inline: true } : null,
 
-    // Booked call if exists
-    callField,
+    // Booked call
+    (date !== 'N/A') ? {
+      name: '📅 Booked Call',
+      value: `**${date}** · ${start}${end ? ` – ${end}` : ''}`,
+      inline: false,
+    } : null,
   ].filter(Boolean)
 
   return {
     title: isHot ? '🔥 HOT INBOUND LEAD — FLODON.IN' : '🌐 NEW WEBSITE LEAD — FLODON.IN',
-    description: `### ${lead.name}${lead.brand_name ? `  ·  ${lead.brand_name}` : ''}`,
+    description: `### ${name}${lead.brand_name ? `  ·  ${lead.brand_name}` : ''}`,
     color: isHot ? 0x22C55E : 0x3B82F6,
     fields,
     footer: { text: `Lead ID: ${lead.id?.slice(0, 8) || 'N/A'}   ·   Source: flodon.in` },
