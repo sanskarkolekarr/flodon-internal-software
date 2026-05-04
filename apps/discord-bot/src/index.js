@@ -39,15 +39,30 @@ http.createServer(async (req, res) => {
       const payload = JSON.parse(body)
       const endpoint = url.split('/').pop()
       
-      // Determine Channel
-      const channelId = endpoint === 'lead' ? CHANNELS.webLeads : CHANNELS.calls
+      // Determine Channel: Both lead and cancel now go to #calls
+      let channelId = CHANNELS.calls 
+      
       const channel = client.channels.cache.get(channelId)
 
       if (channel) {
-        await channel.send({
-          content: payload.content || null,
-          embeds: payload.embeds || []
-        })
+        let messageOptions = {}
+
+        // Handle Raw Lead Payload vs Discord Format
+        if (payload.name && payload.email && !payload.embeds) {
+          // It's a raw lead payload -> format it
+          messageOptions = {
+            content: '🚀 **New Website Lead Qualified**',
+            embeds: [buildWebLeadEmbed(payload)]
+          }
+        } else {
+          // It's already in Discord format (like the Cancellation payload)
+          messageOptions = {
+            content: payload.content || null,
+            embeds: payload.embeds || []
+          }
+        }
+
+        await channel.send(messageOptions)
         log(`Webhook processed: ${endpoint} -> ${channelId}`)
         res.writeHead(200)
         return res.end('OK')
