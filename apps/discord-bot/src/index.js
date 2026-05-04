@@ -2,14 +2,15 @@
 //  Flodon Discord Bot — Main Entry Point
 // ─────────────────────────────────────────────
 import { Client, GatewayIntentBits, Collection } from 'discord.js'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 import { dirname, join } from 'path'
 import { readdirSync } from 'fs'
 import http from 'http'
 import { supabase, CHANNELS, buildWebLeadEmbed, updateWarRoom, log } from '@flodon/core'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const PORT = process.env.PORT || 10000
+const PORT = process.env.BOT_PORT || 10000
+
 http.createServer(async (req, res) => {
   const { method, url, headers } = req
 
@@ -83,7 +84,7 @@ const commandsPath = join(__dirname, 'commands')
 const commandFiles = readdirSync(commandsPath).filter(f => f.endsWith('.js'))
 
 for (const file of commandFiles) {
-  const command = await import(join(commandsPath, file))
+  const command = await import(pathToFileURL(join(commandsPath, file)).href)
   client.commands.set(command.default.data.name, command.default)
   log(`Loaded command: /${command.default.data.name}`)
 }
@@ -93,7 +94,7 @@ const eventsPath = join(__dirname, 'events')
 const eventFiles = readdirSync(eventsPath).filter(f => f.endsWith('.js'))
 
 for (const file of eventFiles) {
-  const event = await import(join(eventsPath, file))
+  const event = await import(pathToFileURL(join(eventsPath, file)).href)
   if (event.default.once) {
     client.once(event.default.name, (...args) => event.default.execute(...args, client))
   } else {
@@ -123,15 +124,6 @@ client.on('interactionCreate', async interaction => {
 
 client.once('ready', () => {
   log(`Logged in as ${client.user.tag}!`)
-
-  /* 
-  // ─── Supabase Realtime: Website Leads ─────────
-  // DEPRECATED: Now handled via HTTP Webhooks
-  log('Setting up Supabase Realtime subscription for website leads...')
-  supabase
-    .channel('website-leads-realtime')
-    ...
-  */
 })
 
 // ─── Login ────────────────────────────────────

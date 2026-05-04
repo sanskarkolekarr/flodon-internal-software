@@ -1,5 +1,5 @@
 import { REST, Routes } from 'discord.js'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 import { dirname, join } from 'path'
 import { readdirSync } from 'fs'
 import '@flodon/core'
@@ -10,7 +10,7 @@ const commandsPath = join(__dirname, 'commands')
 const commandFiles = readdirSync(commandsPath).filter(f => f.endsWith('.js'))
 
 for (const file of commandFiles) {
-  const command = await import(join(commandsPath, file))
+  const command = await import(pathToFileURL(join(commandsPath, file)).href)
   commands.push(command.default.data.toJSON())
 }
 

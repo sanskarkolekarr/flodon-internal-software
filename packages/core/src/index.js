@@ -1,10 +1,4 @@
-import dotenv from 'dotenv'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-// Root .env is 3 levels up from packages/core/src
-dotenv.config({ path: join(__dirname, '../../../../.env') })
+import './loadEnv.js'
 
 export * from './supabase.js'
 export * from './config.js'
