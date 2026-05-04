@@ -47,15 +47,33 @@ http.createServer(async (req, res) => {
       if (channel) {
         let messageOptions = {}
 
-        // Handle Raw Lead Payload vs Discord Format
-        if (payload.name && payload.email && !payload.embeds) {
-          // It's a raw lead payload -> format it as a "New Call Booked"
+        // 1. Raw Lead / Booking Payload
+        if (endpoint === 'lead' && payload.name && !payload.embeds) {
           messageOptions = {
             content: '📅 **New Call Booked**',
             embeds: [buildWebLeadEmbed(payload)]
           }
-        } else {
-          // It's already in Discord format (like the Cancellation payload)
+        } 
+        // 2. Raw Cancellation Payload
+        else if (endpoint === 'cancel' && payload.name && !payload.embeds) {
+          messageOptions = {
+            content: '⚠️ **CALL CANCELLED**\n<@sales>',
+            embeds: [{
+              title: `Cancellation: ${payload.name}`,
+              color: 0xEF4444, // Red
+              fields: [
+                { name: '👤 Name', value: payload.name, inline: true },
+                { name: '📧 Email', value: payload.email || 'N/A', inline: true },
+                { name: '📅 Date', value: payload.date || 'N/A', inline: true },
+                { name: '🕒 Time', value: payload.startTime || 'N/A', inline: true },
+                payload.reason ? { name: '❓ Reason', value: payload.reason, inline: false } : null
+              ].filter(Boolean),
+              timestamp: new Date().toISOString()
+            }]
+          }
+        }
+        // 3. Fallback (Discord pre-formatted payload)
+        else {
           messageOptions = {
             content: payload.content || null,
             embeds: payload.embeds || []
