@@ -19,39 +19,25 @@ export function buildWebLeadEmbed(lead) {
   const isHighValue = (q.readyToMoveForward === 'Yes' || lead.readyToImplement === 'Immediately') && (q.investmentLevel || q.monthlyRevenue)
 
   const fields = [
-    { 
-      name: 'CLIENT PROFILE', 
-      value: `**${name.toUpperCase()}**\n${email}\n${phone}\n[${website.replace(/^https?:\/\//, '')}](${website.startsWith('http') ? website : `https://${website}`})`, 
-      inline: false 
-    },
+    { name: 'Name', value: `**${name.toUpperCase()}**`, inline: false },
+    { name: 'Email', value: `\`${email}\``, inline: false },
+    { name: 'Phone', value: `\`${phone}\``, inline: false },
+    { name: 'Date & Time', value: `\`${date}\`  |  \`${start}${end ? ` - ${end}` : ''}\``, inline: false },
+    { name: 'Website', value: `[${website.replace(/^https?:\/\//, '')}](${website.startsWith('http') ? website : `https://${website}`})`, inline: false },
 
     { name: '\u200B', value: '---', inline: false },
 
-    q.businessDescription ? { 
-      name: 'BUSINESS ANALYSIS', 
-      value: `> ${q.businessDescription}`, 
-      inline: false 
-    } : null,
-    
-    { 
-      name: 'FINANCIAL DATA', 
-      value: `• REVENUE: **${q.monthlyRevenue || 'N/A'}**\n• BUDGET: **${q.investmentLevel || 'N/A'}**`, 
-      inline: false 
-    },
-
-    { 
-      name: 'STRATEGIC INTEL', 
-      value: `• TIMELINE: **${q.readyToImplement || 'N/A'}**\n• AUTHORITY: **${q.decisionMaker || 'N/A'}**`, 
-      inline: false 
-    },
+    { name: 'Business Description', value: `> ${q.businessDescription || 'N/A'}`, inline: false },
+    { name: 'Revenue', value: `**${q.monthlyRevenue || 'N/A'}**`, inline: false },
+    { name: 'Investment', value: `**${q.investmentLevel || 'N/A'}**`, inline: false },
+    { name: 'Timeline', value: `**${q.readyToImplement || 'N/A'}**`, inline: false },
+    { name: 'Decision Maker', value: `**${q.decisionMaker || 'N/A'}**`, inline: false },
 
     { name: '\u200B', value: '---', inline: false },
 
-    (date !== 'N/A') ? {
-      name: 'OPERATIONAL SCHEDULE',
-      value: `\`${date}\`  |  \`${start}${end ? ` - ${end}` : ''}\``,
-      inline: false,
-    } : null,
+    { name: 'Lead Sources', value: `> ${q.leadSources || 'N/A'}`, inline: false },
+    { name: 'Biggest Bottleneck', value: `> ${q.biggestBottleneck || 'N/A'}`, inline: false },
+    { name: '90-Day Goal', value: `> ${q.ninetyDayGoal || q.goal || 'N/A'}`, inline: false },
   ].filter(Boolean)
 
   return {
@@ -72,15 +58,20 @@ export function buildWebhookCancelEmbed(payload) {
     color: 0x000000, 
     fields: [
       { 
-        name: 'CLIENT IDENTITY', 
-        value: `**${payload.name.toUpperCase()}**\n\`${payload.date || 'N/A'}\` at \`${payload.startTime || 'N/A'}\``, 
+        name: 'Name', 
+        value: `**${payload.name.toUpperCase()}**`, 
         inline: false 
       },
-      payload.reason ? { 
-        name: 'TERMINATION RATIONALE', 
-        value: `> ${payload.reason}`, 
+      {
+        name: 'Date & Time',
+        value: `\`${payload.date || 'N/A'}\` at \`${payload.startTime || 'N/A'}\``,
+        inline: false
+      },
+      { 
+        name: 'Termination Rationale', 
+        value: `> ${payload.reason || 'N/A'}`, 
         inline: false 
-      } : null,
+      },
     ].filter(Boolean),
     footer: { text: 'RECORD TERMINATED' },
     timestamp: new Date().toISOString(),
@@ -96,10 +87,20 @@ export function buildDealEmbed(deal, username) {
     color: 0x000000,
     fields: [
       { 
-        name: 'ENTITY', 
-        value: `**${deal.client_name.toUpperCase()}**\nMRR: **₹${deal.amount_monthly.toLocaleString('en-IN')}**\nVenture: ${deal.venture}`, 
+        name: 'Name', 
+        value: `**${deal.client_name.toUpperCase()}**`, 
         inline: false 
       },
+      {
+        name: 'Revenue',
+        value: `**₹${deal.amount_monthly.toLocaleString('en-IN')}**`,
+        inline: false
+      },
+      {
+        name: 'Venture',
+        value: deal.venture,
+        inline: false
+      }
     ].filter(Boolean),
     footer: { text: `EXECUTED BY: ${username.toUpperCase()}` },
     timestamp: new Date().toISOString(),
@@ -118,11 +119,10 @@ export function buildOutreachEmbed(data, username) {
     title: 'OUTREACH PERFORMANCE SUMMARY',
     color: 0x2b2d31,
     fields: [
-      { 
-        name: 'CHANNEL: ' + data.platform.toUpperCase(), 
-        value: `• CONVERSION: **${rate}%**\n• SENT: **${data.sent_count}**\n• REPLIES: **${data.reply_count}**`, 
-        inline: false 
-      },
+      { name: 'Channel', value: data.platform.toUpperCase(), inline: false },
+      { name: 'Conversion Rate', value: `**${rate}%**`, inline: false },
+      { name: 'Sent', value: `**${data.sent_count}**`, inline: false },
+      { name: 'Replies', value: `**${data.reply_count}**`, inline: false },
     ],
     footer: { text: `METRICS BY: ${username.toUpperCase()}` },
     timestamp: new Date().toISOString(),
@@ -146,10 +146,20 @@ export function buildCallEmbed(data, username) {
     color: config.color,
     fields: [
       { 
-        name: 'PROSPECT', 
-        value: `**${data.prospect_name.toUpperCase()}**\nSource: ${data.source ? data.source.toUpperCase() : 'MANUAL'}${data.outcome ? `\nOutcome: ${data.outcome.replace(/_/g, ' ').toUpperCase()}` : ''}`, 
+        name: 'Name', 
+        value: `**${data.prospect_name.toUpperCase()}**`, 
         inline: false 
       },
+      {
+        name: 'Source',
+        value: data.source ? data.source.toUpperCase() : 'MANUAL',
+        inline: false
+      },
+      data.outcome ? { 
+        name: 'Outcome', 
+        value: data.outcome.replace(/_/g, ' ').toUpperCase(), 
+        inline: false 
+      } : null,
     ].filter(Boolean),
     footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
     timestamp: new Date().toISOString(),
@@ -165,9 +175,19 @@ export function buildPaymentEmbed(data, username) {
     color: 0x000000,
     fields: [
       { 
-        name: 'CLIENT', 
-        value: `**${data.client_name.toUpperCase()}**\nAmount: **₹${data.amount.toLocaleString('en-IN')}**\nGateway: ${data.provider.toUpperCase()}`, 
+        name: 'Name', 
+        value: `**${data.client_name.toUpperCase()}**`, 
         inline: false 
+      },
+      {
+        name: 'Amount',
+        value: `**₹${data.amount.toLocaleString('en-IN')}**`,
+        inline: false
+      },
+      {
+        name: 'Gateway',
+        value: data.provider.toUpperCase(),
+        inline: false
       },
     ],
     footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
@@ -184,9 +204,19 @@ export function buildChurnEmbed(data, username) {
     color: 0x000000,
     fields: [
       { 
-        name: 'CLIENT', 
-        value: `**${data.client_name.toUpperCase()}**\nImpact: **-₹${data.amount_monthly.toLocaleString('en-IN')}**\nReason: ${data.reason ? data.reason.toUpperCase() : 'N/A'}`, 
+        name: 'Name', 
+        value: `**${data.client_name.toUpperCase()}**`, 
         inline: false 
+      },
+      {
+        name: 'Impact',
+        value: `**-₹${data.amount_monthly.toLocaleString('en-IN')}**`,
+        inline: false
+      },
+      {
+        name: 'Reason',
+        value: data.reason ? data.reason.toUpperCase() : 'N/A',
+        inline: false
       },
     ].filter(Boolean),
     footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
@@ -205,12 +235,17 @@ export function buildCallStatusEmbed(call, status) {
     color: 0x000000,
     fields: [
       { 
-        name: 'PROSPECT', 
-        value: `**${call.prospect_name.toUpperCase()}**\nTime: \`${new Date(call.scheduled_at).toLocaleDateString()}\` | \`${new Date(call.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\``, 
+        name: 'Name', 
+        value: `**${call.prospect_name.toUpperCase()}**`, 
         inline: false 
       },
       { 
-        name: 'REASON', 
+        name: 'Date & Time', 
+        value: `\`${new Date(call.scheduled_at).toLocaleDateString()}\` | \`${new Date(call.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\``, 
+        inline: false 
+      },
+      { 
+        name: 'Reason', 
         value: `> ${call.outcome || 'N/A'}`, 
         inline: false 
       }
