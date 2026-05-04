@@ -1,0 +1,12 @@
+node_modules/
+.env
+*.log
+dist/
+build/
+.DS_Store
+.idea/
+.vscode/
+**/node_modules/
+**/.env
+.git_backup_bot/
+.git_backup_soft/
