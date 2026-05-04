@@ -1,0 +1,16 @@
+{
+  "name": "@flodon/internal-software",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@flodon/core": "*",
+    "discord.js": "^14.14.1",
+    "@supabase/supabase-js": "^2.39.8",
+    "dotenv": "^16.4.5"
+  }
+}
