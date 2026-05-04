@@ -50,14 +50,14 @@ http.createServer(async (req, res) => {
         // 1. Raw Lead / Booking Payload
         if (endpoint === 'lead' && payload.name && !payload.embeds) {
           messageOptions = {
-            content: '**SYSTEM NOTIFICATION: NEW STRATEGY SESSION REGISTERED**',
+            content: 'NEW BOOKING\n<@sales>',
             embeds: [buildWebLeadEmbed(payload)]
           }
         } 
         // 2. Raw Cancellation Payload
         else if (endpoint === 'cancel' && payload.name && !payload.embeds) {
           messageOptions = {
-            content: '**OPERATIONAL ALERT: SESSION CANCELLED**\n<@sales>',
+            content: 'CALL CANCELLED\n<@sales>',
             embeds: [buildWebhookCancelEmbed(payload)]
           }
         }

@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────
-//  Corporate Intelligence Embed Builders
+//  Ultra-Minimalist Corporate Embed Builders
 // ─────────────────────────────────────────────
 
 /**
- * Builds a minimalist, corporate-standard embed for website leads.
+ * Builds an ultra-minimalist embed for website leads.
  */
 export function buildWebLeadEmbed(lead) {
   const q = lead.qualification || lead || {}
@@ -19,78 +19,69 @@ export function buildWebLeadEmbed(lead) {
   const isHighValue = (q.readyToMoveForward === 'Yes' || lead.readyToImplement === 'Immediately') && (q.investmentLevel || q.monthlyRevenue)
 
   const fields = [
-    { name: 'CONTACT EMAIL', value: `\`${email}\``, inline: true },
-    { name: 'PHONE NUMBER', value: `\`${phone}\``, inline: true },
-    { name: 'DIGITAL DOMAIN', value: `[Link](${website.startsWith('http') ? website : `https://${website}`})`, inline: true },
+    { name: 'EMAIL', value: `\`${email}\``, inline: true },
+    { name: 'PHONE', value: `\`${phone}\``, inline: true },
+    { name: 'DOMAIN', value: `[Link](${website.startsWith('http') ? website : `https://${website}`})`, inline: true },
 
-    { name: '---', value: isHighValue ? '**PRIORITY QUALIFICATION METRICS**' : '**QUALIFICATION METRICS**', inline: false },
-
-    q.businessDescription ? { name: 'BUSINESS DESCRIPTION', value: `> ${q.businessDescription}`, inline: false } : null,
-    q.monthlyRevenue ? { name: 'MONTHLY REVENUE', value: `**${q.monthlyRevenue}**`, inline: true } : null,
-    q.investmentLevel ? { name: 'INVESTMENT LEVEL', value: `**${q.investmentLevel}**`, inline: true } : null,
-    q.readyToImplement ? { name: 'IMPLEMENTATION TIMELINE', value: `**${q.readyToImplement}**`, inline: true } : null,
-
-    q.goal90Days ? { name: 'STRATEGIC OBJECTIVE', value: q.goal90Days, inline: true } : null,
-    q.biggestBottleneck ? { name: 'OPERATIONAL BOTTLENECK', value: q.biggestBottleneck, inline: true } : null,
-    q.decisionMaker ? { name: 'DECISION AUTHORITY', value: q.decisionMaker, inline: true } : null,
+    q.businessDescription ? { name: 'BUSINESS', value: `> ${q.businessDescription}`, inline: false } : null,
+    q.monthlyRevenue ? { name: 'REVENUE', value: `**${q.monthlyRevenue}**`, inline: true } : null,
+    q.investmentLevel ? { name: 'BUDGET', value: `**${q.investmentLevel}**`, inline: true } : null,
+    q.readyToImplement ? { name: 'TIMELINE', value: `**${q.readyToImplement}**`, inline: true } : null,
 
     (date !== 'N/A') ? {
-      name: 'SCHEDULED STRATEGY SESSION',
+      name: 'SCHEDULE',
       value: `\`${date}\` | \`${start}${end ? ` - ${end}` : ''}\``,
       inline: false,
     } : null,
   ].filter(Boolean)
 
   return {
-    title: isHighValue ? 'SYSTEM ALERT: PRIORITY INBOUND' : 'SYSTEM NOTIFICATION: NEW INBOUND',
-    description: `### ${name.toUpperCase()}${lead.brand_name ? `\n*${lead.brand_name}*` : ''}`,
-    color: isHighValue ? 0x0F172A : 0x334155, // Navy vs Slate
+    title: isHighValue ? 'PRIORITY BOOKING' : 'STRATEGY SESSION',
+    description: `### ${name.toUpperCase()}`,
+    color: isHighValue ? 0x000000 : 0x2b2d31, // Black vs Dark Grey
     fields,
-    footer: { text: `FLODON INTERNAL OPERATIONS • ID: ${lead.id?.slice(0, 8) || 'SYSTEM'}` },
+    footer: { text: `REF: ${lead.id?.slice(0, 8) || 'AUTO'}` },
     timestamp: new Date().toISOString(),
   }
 }
 
 /**
- * Builds a professional corporate cancellation alert.
+ * Builds an ultra-minimalist cancellation alert.
  */
 export function buildWebhookCancelEmbed(payload) {
   return {
-    title: 'OPERATIONAL ALERT: SESSION TERMINATED',
+    title: 'CALL CANCELLED',
     description: `### ${payload.name.toUpperCase()}`,
-    color: 0x450a0a, // Deep Dark Red
+    color: 0x000000, 
     fields: [
-      { name: 'PROSPECT NAME', value: `\`${payload.name}\``, inline: true },
-      { name: 'EMAIL ADDRESS', value: `\`${payload.email || 'N/A'}\``, inline: true },
-      { name: 'SCHEDULED DATE', value: `\`${payload.date || 'N/A'}\``, inline: true },
-      { name: 'SCHEDULED TIME', value: `\`${payload.startTime || 'N/A'}\``, inline: true },
-      payload.reason ? { name: 'CANCELLATION REASON', value: `> ${payload.reason}`, inline: false } : null,
+      { name: 'IDENTIFIER', value: `\`${payload.name}\``, inline: true },
+      { name: 'SCHEDULE', value: `\`${payload.date || 'N/A'}\` | \`${payload.startTime || 'N/A'}\``, inline: true },
+      payload.reason ? { name: 'REASON', value: `> ${payload.reason}`, inline: false } : null,
     ].filter(Boolean),
-    footer: { text: 'FLODON AUTOMATED LOGISTICS' },
+    footer: { text: 'TERMINATED' },
     timestamp: new Date().toISOString(),
   }
 }
 
 /**
- * Builds a corporate-level deal log.
+ * Builds a minimalist deal log.
  */
 export function buildDealEmbed(deal, username) {
   return {
-    title: 'REVENUE RECOGNITION: DEAL SECURED',
+    title: 'DEAL SECURED',
     description: `### ${deal.client_name.toUpperCase()}`,
-    color: 0x0F172A,
+    color: 0x000000,
     fields: [
-      { name: 'MONTHLY RECURRING REVENUE', value: `**₹${deal.amount_monthly.toLocaleString('en-IN')}**`, inline: true },
-      { name: 'ENTITY VENTURE', value: deal.venture, inline: true },
-      deal.notes ? { name: 'ENGAGEMENT NOTES', value: `> ${deal.notes}`, inline: false } : null,
+      { name: 'MRR', value: `**₹${deal.amount_monthly.toLocaleString('en-IN')}**`, inline: true },
+      { name: 'ENTITY', value: deal.venture, inline: true },
     ].filter(Boolean),
-    footer: { text: `EXECUTED BY: ${username.toUpperCase()}` },
+    footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
     timestamp: new Date().toISOString(),
   }
 }
 
 /**
- * Builds a corporate outreach log.
+ * Builds a minimalist outreach log.
  */
 export function buildOutreachEmbed(data, username) {
   const rate = data.sent_count > 0
@@ -98,95 +89,93 @@ export function buildOutreachEmbed(data, username) {
     : '0.0'
 
   return {
-    title: 'KPI UPDATE: OUTREACH PERFORMANCE',
-    color: 0x334155,
+    title: 'OUTREACH LOG',
+    color: 0x2b2d31,
     fields: [
-      { name: 'PLATFORM CHANNEL', value: data.platform.toUpperCase(), inline: true },
-      { name: 'VOLUME SENT', value: `**${data.sent_count}**`, inline: true },
-      { name: 'REPLY COUNT', value: `**${data.reply_count}**`, inline: true },
-      { name: 'CONVERSION RATE', value: `**${rate}%**`, inline: true },
+      { name: 'CHANNEL', value: data.platform.toUpperCase(), inline: true },
+      { name: 'SENT', value: `**${data.sent_count}**`, inline: true },
+      { name: 'REPLIES', value: `**${data.reply_count}**`, inline: true },
+      { name: 'RATE', value: `**${rate}%**`, inline: true },
     ],
-    footer: { text: `REPORTED BY: ${username.toUpperCase()}` },
+    footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
     timestamp: new Date().toISOString(),
   }
 }
 
 /**
- * Builds a corporate call log.
+ * Builds a minimalist call log.
  */
 export function buildCallEmbed(data, username) {
   const statusConfig = {
-    booked: { color: 0x334155, title: 'BOOKED' },
-    completed: { color: 0x0F172A, title: 'COMPLETED' },
-    noshowed: { color: 0x450a0a, title: 'NO SHOW' },
-    cancelled: { color: 0x1e293b, title: 'CANCELLED' },
+    booked: { color: 0x2b2d31, title: 'BOOKED' },
+    completed: { color: 0x000000, title: 'COMPLETED' },
+    noshowed: { color: 0x000000, title: 'NO SHOW' },
+    cancelled: { color: 0x000000, title: 'CANCELLED' },
   }
-  const config = statusConfig[data.status] || { color: 0x334155, title: 'LOGGED' }
+  const config = statusConfig[data.status] || { color: 0x2b2d31, title: 'LOGGED' }
 
   return {
-    title: `SESSION STATUS: ${config.title}`,
+    title: `CALL ${config.title}`,
     color: config.color,
     fields: [
-      { name: 'PROSPECT IDENTITY', value: `**${data.prospect_name.toUpperCase()}**${data.company ? ` (${data.company.toUpperCase()})` : ''}`, inline: false },
-      { name: 'ACQUISITION SOURCE', value: data.source ? data.source.toUpperCase() : 'MANUAL', inline: true },
-      data.outcome ? { name: 'SESSION OUTCOME', value: data.outcome.replace(/_/g, ' ').toUpperCase(), inline: true } : null,
+      { name: 'PROSPECT', value: `**${data.prospect_name.toUpperCase()}**`, inline: false },
+      { name: 'SOURCE', value: data.source ? data.source.toUpperCase() : 'MANUAL', inline: true },
+      data.outcome ? { name: 'OUTCOME', value: data.outcome.replace(/_/g, ' ').toUpperCase(), inline: true } : null,
     ].filter(Boolean),
-    footer: { text: `OFFICIAL LOG BY: ${username.toUpperCase()}` },
+    footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
     timestamp: new Date().toISOString(),
   }
 }
 
 /**
- * Builds a corporate payment received log.
+ * Builds a minimalist payment log.
  */
 export function buildPaymentEmbed(data, username) {
   return {
-    title: 'FINANCIAL UPDATE: CAPITAL RECEIVED',
-    color: 0x0F172A,
+    title: 'PAYMENT RECEIVED',
+    color: 0x000000,
     fields: [
-      { name: 'CLIENT ENTITY', value: data.client_name.toUpperCase(), inline: true },
-      { name: 'GROSS AMOUNT', value: `**₹${data.amount.toLocaleString('en-IN')}**`, inline: true },
-      { name: 'PAYMENT GATEWAY', value: data.provider.toUpperCase(), inline: true },
-      { name: 'TRANSACTION CATEGORY', value: data.type.toUpperCase(), inline: true },
+      { name: 'CLIENT', value: data.client_name.toUpperCase(), inline: true },
+      { name: 'AMOUNT', value: `**₹${data.amount.toLocaleString('en-IN')}**`, inline: true },
+      { name: 'GATEWAY', value: data.provider.toUpperCase(), inline: true },
     ],
-    footer: { text: `ACCOUNTING UPDATE BY: ${username.toUpperCase()}` },
+    footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
     timestamp: new Date().toISOString(),
   }
 }
 
 /**
- * Builds a corporate churn log.
+ * Builds a minimalist churn log.
  */
 export function buildChurnEmbed(data, username) {
   return {
-    title: 'OFFBOARDING NOTIFICATION: REVENUE LOSS',
-    color: 0x450a0a,
+    title: 'CLIENT CHURN',
+    color: 0x000000,
     fields: [
-      { name: 'FORMER ENTITY', value: data.client_name.toUpperCase(), inline: true },
-      { name: 'REVENUE IMPACT', value: `**-₹${data.amount_monthly.toLocaleString('en-IN')}**`, inline: true },
-      { name: 'CHURN RATIONALE', value: data.reason ? data.reason.toUpperCase() : 'NOT SPECIFIED', inline: true },
-      data.notes ? { name: 'RETENTION ANALYSIS', value: `> ${data.notes}`, inline: false } : null,
+      { name: 'CLIENT', value: data.client_name.toUpperCase(), inline: true },
+      { name: 'IMPACT', value: `**-₹${data.amount_monthly.toLocaleString('en-IN')}**`, inline: true },
+      { name: 'REASON', value: data.reason ? data.reason.toUpperCase() : 'N/A', inline: true },
     ].filter(Boolean),
-    footer: { text: `OFFBOARDING LOG BY: ${username.toUpperCase()}` },
+    footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
     timestamp: new Date().toISOString(),
   }
 }
 
 /**
- * Builds the corporate cancellation/rejection alert.
+ * Builds the minimalist cancellation alert.
  */
 export function buildCallStatusEmbed(call, status) {
   const isCancel = status === 'cancelled'
   
   return {
-    title: isCancel ? 'SESSION NOTIFICATION: CANCELLATION' : 'SESSION NOTIFICATION: REJECTION',
-    description: `### ${call.prospect_name.toUpperCase()}${call.company ? ` | ${call.company.toUpperCase()}` : ''}`,
-    color: isCancel ? 0x450a0a : 0x78350f,
+    title: isCancel ? 'SESSION CANCELLED' : 'SESSION REJECTED',
+    description: `### ${call.prospect_name.toUpperCase()}`,
+    color: 0x000000,
     fields: [
-      { name: 'ORIGINAL SCHEDULE', value: `\`${new Date(call.scheduled_at).toLocaleDateString()}\` | \`${new Date(call.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\``, inline: false },
-      { name: 'FORMAL REASON', value: `> ${call.outcome || 'NO REASON PROVIDED'}`, inline: false }
+      { name: 'SCHEDULE', value: `\`${new Date(call.scheduled_at).toLocaleDateString()}\` | \`${new Date(call.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\``, inline: false },
+      { name: 'REASON', value: `> ${call.outcome || 'N/A'}`, inline: false }
     ],
-    footer: { text: `TRACKING ID: ${call.id.slice(0, 8)}` },
+    footer: { text: `ID: ${call.id.slice(0, 8)}` },
     timestamp: new Date().toISOString(),
   }
 }
