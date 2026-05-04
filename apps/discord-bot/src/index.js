@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'url'
 import { dirname, join } from 'path'
 import { readdirSync } from 'fs'
 import http from 'http'
-import { supabase, CHANNELS, buildWebLeadEmbed, updateWarRoom, log } from '@flodon/core'
+import { supabase, CHANNELS, buildWebLeadEmbed, buildWebhookCancelEmbed, updateWarRoom, log } from '@flodon/core'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PORT = process.env.BOT_PORT || 10000
@@ -50,26 +50,15 @@ http.createServer(async (req, res) => {
         // 1. Raw Lead / Booking Payload
         if (endpoint === 'lead' && payload.name && !payload.embeds) {
           messageOptions = {
-            content: '📅 **New Call Booked**',
+            content: '📅 **NEW STRATEGY SESSION BOOKED**',
             embeds: [buildWebLeadEmbed(payload)]
           }
         } 
         // 2. Raw Cancellation Payload
         else if (endpoint === 'cancel' && payload.name && !payload.embeds) {
           messageOptions = {
-            content: '⚠️ **CALL CANCELLED**\n<@sales>',
-            embeds: [{
-              title: `Cancellation: ${payload.name}`,
-              color: 0xEF4444, // Red
-              fields: [
-                { name: '👤 Name', value: payload.name, inline: true },
-                { name: '📧 Email', value: payload.email || 'N/A', inline: true },
-                { name: '📅 Date', value: payload.date || 'N/A', inline: true },
-                { name: '🕒 Time', value: payload.startTime || 'N/A', inline: true },
-                payload.reason ? { name: '❓ Reason', value: payload.reason, inline: false } : null
-              ].filter(Boolean),
-              timestamp: new Date().toISOString()
-            }]
+            content: '⚠️ **URGENT: CALL CANCELLED**\n<@sales>',
+            embeds: [buildWebhookCancelEmbed(payload)]
           }
         }
         // 3. Fallback (Discord pre-formatted payload)
