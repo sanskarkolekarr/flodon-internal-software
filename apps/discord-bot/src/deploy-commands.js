@@ -18,15 +18,17 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   try {
-    console.log(`\n🔄 Registering ${commands.length} slash commands to guild ${process.env.DISCORD_GUILD_ID}...`)
+    console.log(`\n🔄 Registering ${commands.length} slash commands GLOBALLY...`)
 
+    // We use applicationCommands instead of applicationGuildCommands for global deployment
     const data = await rest.put(
-      Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, process.env.DISCORD_GUILD_ID),
+      Routes.applicationCommands(process.env.DISCORD_CLIENT_ID),
       { body: commands },
     )
 
-    console.log(`✅ Successfully registered ${data.length} commands!\n`)
-    data.forEach(cmd => console.log(`   /${cmd.name} — ${cmd.description}`))
+    console.log(`✅ Successfully registered ${data.length} commands GLOBALLY!\n`)
+    console.log(`💡 NOTE: Global commands can take a few minutes to appear in Discord.`)
+    data.forEach(cmd => console.log(`   /${cmd.name}`))
   } catch (error) {
     console.error('❌ Error registering commands:', error)
   }

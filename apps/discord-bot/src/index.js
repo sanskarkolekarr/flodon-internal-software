@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────
 //  Flodon Discord Bot — Main Entry Point
 // ─────────────────────────────────────────────
-import { Client, GatewayIntentBits, Collection } from 'discord.js'
+import { Client, GatewayIntentBits, Collection, EmbedBuilder } from 'discord.js'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { dirname, join } from 'path'
 import { readdirSync } from 'fs'
@@ -10,6 +10,7 @@ import { supabase, CHANNELS, ROLES, buildWebLeadEmbed, buildWebhookCancelEmbed, 
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PORT = process.env.BOT_PORT || 10000
+const PREFIX = '!'
 
 // Helper to format Role Pings
 const tagRole = (roleId) => roleId.startsWith('<@&') ? roleId : `<@&${roleId}>`
@@ -100,6 +101,7 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent, // Required for Prefix Commands
   ],
 })
 
@@ -144,6 +146,52 @@ client.on('interactionCreate', async interaction => {
     } else {
       await interaction.reply(msg)
     }
+  }
+})
+
+// ─── Handle Prefix Commands ───────────────────
+client.on('messageCreate', async message => {
+  if (message.author.bot || !message.content.startsWith(PREFIX)) return
+
+  const args = message.content.slice(PREFIX.length).trim().split(/ +/)
+  let commandName = args.shift().toLowerCase()
+
+  // Alias support
+  if (commandName === 'deals') commandName = 'deal'
+  if (commandName === 'bookings') commandName = 'webleads'
+  if (commandName === 'outreaches') commandName = 'outreach'
+
+  const command = client.commands.get(commandName)
+  if (!command) return
+
+  // Mock an interaction-like object for compatibility where possible
+  // NOTE: This only works for simple commands that only use interaction.reply()
+  // More complex commands (modals, options) still need /slash usage.
+  const mockInteraction = {
+    guild: message.guild,
+    channel: message.channel,
+    user: message.author,
+    member: message.member,
+    reply: async (options) => {
+      if (typeof options === 'string') return message.reply(options)
+      return message.reply(options)
+    },
+    followUp: async (options) => {
+      if (typeof options === 'string') return message.reply(options)
+      return message.reply(options)
+    },
+    options: {
+      getString: (name) => null, // Placeholder for prefix args if needed
+      getInteger: (name) => null,
+      getNumber: (name) => null,
+    }
+  }
+
+  try {
+    await command.execute(mockInteraction, client)
+  } catch (error) {
+    log(`Error executing !${commandName}: ${error.message}`, 'error')
+    message.reply('❌ Something went wrong executing this command. Try using the slash command instead.')
   }
 })
 
