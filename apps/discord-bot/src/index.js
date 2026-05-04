@@ -49,9 +49,9 @@ http.createServer(async (req, res) => {
 
         // Handle Raw Lead Payload vs Discord Format
         if (payload.name && payload.email && !payload.embeds) {
-          // It's a raw lead payload -> format it
+          // It's a raw lead payload -> format it as a "New Call Booked"
           messageOptions = {
-            content: '🚀 **New Website Lead Qualified**',
+            content: '📅 **New Call Booked**',
             embeds: [buildWebLeadEmbed(payload)]
           }
         } else {
