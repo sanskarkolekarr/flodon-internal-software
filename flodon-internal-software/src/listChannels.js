@@ -1,8 +1,5 @@
 import { Client, GatewayIntentBits } from 'discord.js'
 import * as dotenv from 'dotenv'
-import path from 'path'
-
-dotenv.config({ path: path.resolve(process.cwd(), '.env') })
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]

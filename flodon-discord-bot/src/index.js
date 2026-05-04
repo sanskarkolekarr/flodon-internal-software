@@ -12,12 +12,6 @@ import { CHANNELS } from './config.js'
 import { buildWebLeadEmbed } from './utils/embedBuilders.js'
 import { updateWarRoom } from './utils/warroom.js'
 import { log } from './utils/logger.js'
-import http from 'http'
-
-dotenv.config()
-
-// ─── Webhook & Heartbeat Server ───────────────
-const PORT = process.env.PORT || 10000
 http.createServer(async (req, res) => {
   const { method, url, headers } = req
 
@@ -87,7 +81,6 @@ const client = new Client({
 
 // ─── Load Commands ────────────────────────────
 client.commands = new Collection()
-const __dirname = dirname(fileURLToPath(import.meta.url))
 const commandsPath = join(__dirname, 'commands')
 const commandFiles = readdirSync(commandsPath).filter(f => f.endsWith('.js'))
 
