@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────
-//  Premium Corporate Intelligence Briefings
+//  Pure Minimalist Booking Records
 // ─────────────────────────────────────────────
 
 /**
- * Builds a premium, list-style intelligence briefing for website leads.
+ * Builds a pure minimalist embed for website leads.
  */
 export function buildWebLeadEmbed(lead) {
   const q = lead.qualification || lead || {}
@@ -16,64 +16,42 @@ export function buildWebLeadEmbed(lead) {
   const start = lead.startTime || lead.booked_start || 'N/A'
   const end = lead.endTime || lead.booked_end || ''
 
-  const isHighValue = (q.readyToMoveForward === 'Yes' || lead.readyToImplement === 'Immediately') && (q.investmentLevel || q.monthlyRevenue)
-
   const fields = [
-    { name: 'Name', value: `**${name.toUpperCase()}**`, inline: false },
-    { name: 'Email', value: `\`${email}\``, inline: false },
-    { name: 'Phone', value: `\`${phone}\``, inline: false },
-    { name: 'Date & Time', value: `\`${date}\`  |  \`${start}${end ? ` - ${end}` : ''}\``, inline: false },
-    { name: 'Website', value: `[${website.replace(/^https?:\/\//, '')}](${website.startsWith('http') ? website : `https://${website}`})`, inline: false },
-
-    { name: '\u200B', value: '---', inline: false },
-
-    { name: 'Business Description', value: `> ${q.businessDescription || 'N/A'}`, inline: false },
-    { name: 'Revenue', value: `**${q.monthlyRevenue || 'N/A'}**`, inline: false },
-    { name: 'Investment', value: `**${q.investmentLevel || 'N/A'}**`, inline: false },
-    { name: 'Timeline', value: `**${q.readyToImplement || 'N/A'}**`, inline: false },
-    { name: 'Decision Maker', value: `**${q.decisionMaker || 'N/A'}**`, inline: false },
-
-    { name: '\u200B', value: '---', inline: false },
-
-    { name: 'Lead Sources', value: `> ${q.leadSources || 'N/A'}`, inline: false },
-    { name: 'Biggest Bottleneck', value: `> ${q.biggestBottleneck || 'N/A'}`, inline: false },
-    { name: '90-Day Goal', value: `> ${q.ninetyDayGoal || q.goal || 'N/A'}`, inline: false },
-  ].filter(Boolean)
+    { name: 'Name', value: name, inline: false },
+    { name: 'Email', value: email, inline: false },
+    { name: 'Phone', value: phone, inline: false },
+    { name: 'Date & Time', value: `${date} | ${start}${end ? ` - ${end}` : ''} (IST)`, inline: false },
+    { name: 'Website', value: website, inline: false },
+    { name: 'Business Description', value: q.businessDescription || 'N/A', inline: false },
+    { name: 'Revenue', value: q.monthlyRevenue || 'N/A', inline: false },
+    { name: 'Investment', value: q.investmentLevel || 'N/A', inline: false },
+    { name: 'Timeline', value: q.readyToImplement || 'N/A', inline: false },
+    { name: 'Decision Maker', value: q.decisionMaker || 'N/A', inline: false },
+    { name: 'Lead Source', value: q.leadSources || q.leadSource || 'N/A', inline: false },
+    { name: 'Biggest Bottleneck', value: q.biggestBottleneck || 'N/A', inline: false },
+    { name: '90-Day Goal', value: q.ninetyDayGoal || q.goal || 'N/A', inline: false },
+  ]
 
   return {
-    title: isHighValue ? 'PRIORITY CLIENT BRIEFING' : 'CLIENT INTELLIGENCE BRIEFING',
-    color: isHighValue ? 0x000000 : 0x2b2d31,
+    title: 'NEW BOOKING',
+    color: 0x2b2d31,
     fields,
-    footer: { text: `REF: ${lead.id?.slice(0, 8) || 'AUTO'}` },
     timestamp: new Date().toISOString(),
   }
 }
 
 /**
- * Builds a premium cancellation briefing.
+ * Builds a minimalist cancellation alert.
  */
 export function buildWebhookCancelEmbed(payload) {
   return {
-    title: 'TERMINATION BRIEFING',
+    title: 'CALL CANCELLED',
     color: 0x000000, 
     fields: [
-      { 
-        name: 'Name', 
-        value: `**${payload.name.toUpperCase()}**`, 
-        inline: false 
-      },
-      {
-        name: 'Date & Time',
-        value: `\`${payload.date || 'N/A'}\` at \`${payload.startTime || 'N/A'}\``,
-        inline: false
-      },
-      { 
-        name: 'Termination Rationale', 
-        value: `> ${payload.reason || 'N/A'}`, 
-        inline: false 
-      },
-    ].filter(Boolean),
-    footer: { text: 'RECORD TERMINATED' },
+      { name: 'Name', value: payload.name || 'N/A', inline: false },
+      { name: 'Date & Time', value: `${payload.date || 'N/A'} | ${payload.startTime || 'N/A'}`, inline: false },
+      { name: 'Reason', value: payload.reason || 'N/A', inline: false },
+    ],
     timestamp: new Date().toISOString(),
   }
 }
@@ -83,26 +61,14 @@ export function buildWebhookCancelEmbed(payload) {
  */
 export function buildDealEmbed(deal, username) {
   return {
-    title: 'DEAL EXECUTION LOG',
+    title: 'DEAL SECURED',
     color: 0x000000,
     fields: [
-      { 
-        name: 'Name', 
-        value: `**${deal.client_name.toUpperCase()}**`, 
-        inline: false 
-      },
-      {
-        name: 'Revenue',
-        value: `**₹${deal.amount_monthly.toLocaleString('en-IN')}**`,
-        inline: false
-      },
-      {
-        name: 'Venture',
-        value: deal.venture,
-        inline: false
-      }
-    ].filter(Boolean),
-    footer: { text: `EXECUTED BY: ${username.toUpperCase()}` },
+      { name: 'Name', value: deal.client_name || 'N/A', inline: false },
+      { name: 'Revenue', value: `₹${deal.amount_monthly?.toLocaleString('en-IN') || '0'}`, inline: false },
+      { name: 'Venture', value: deal.venture || 'N/A', inline: false }
+    ],
+    footer: { text: `Logged by: ${username}` },
     timestamp: new Date().toISOString(),
   }
 }
@@ -116,15 +82,15 @@ export function buildOutreachEmbed(data, username) {
     : '0.0'
 
   return {
-    title: 'OUTREACH PERFORMANCE SUMMARY',
+    title: 'OUTREACH LOG',
     color: 0x2b2d31,
     fields: [
-      { name: 'Channel', value: data.platform.toUpperCase(), inline: false },
-      { name: 'Conversion Rate', value: `**${rate}%**`, inline: false },
-      { name: 'Sent', value: `**${data.sent_count}**`, inline: false },
-      { name: 'Replies', value: `**${data.reply_count}**`, inline: false },
+      { name: 'Channel', value: data.platform?.toUpperCase() || 'N/A', inline: false },
+      { name: 'Sent', value: String(data.sent_count || 0), inline: false },
+      { name: 'Replies', value: String(data.reply_count || 0), inline: false },
+      { name: 'Rate', value: `${rate}%`, inline: false },
     ],
-    footer: { text: `METRICS BY: ${username.toUpperCase()}` },
+    footer: { text: `Logged by: ${username}` },
     timestamp: new Date().toISOString(),
   }
 }
@@ -133,35 +99,15 @@ export function buildOutreachEmbed(data, username) {
  * Builds a minimalist call log.
  */
 export function buildCallEmbed(data, username) {
-  const statusConfig = {
-    booked: { color: 0x2b2d31, title: 'BOOKED' },
-    completed: { color: 0x000000, title: 'COMPLETED' },
-    noshowed: { color: 0x000000, title: 'NO SHOW' },
-    cancelled: { color: 0x000000, title: 'CANCELLED' },
-  }
-  const config = statusConfig[data.status] || { color: 0x2b2d31, title: 'LOGGED' }
-
   return {
-    title: `SESSION STATUS: ${config.title}`,
-    color: config.color,
+    title: `CALL LOG: ${data.status?.toUpperCase() || 'LOGGED'}`,
+    color: 0x2b2d31,
     fields: [
-      { 
-        name: 'Name', 
-        value: `**${data.prospect_name.toUpperCase()}**`, 
-        inline: false 
-      },
-      {
-        name: 'Source',
-        value: data.source ? data.source.toUpperCase() : 'MANUAL',
-        inline: false
-      },
-      data.outcome ? { 
-        name: 'Outcome', 
-        value: data.outcome.replace(/_/g, ' ').toUpperCase(), 
-        inline: false 
-      } : null,
-    ].filter(Boolean),
-    footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
+      { name: 'Name', value: data.prospect_name || 'N/A', inline: false },
+      { name: 'Source', value: data.source?.toUpperCase() || 'N/A', inline: false },
+      { name: 'Outcome', value: data.outcome?.replace(/_/g, ' ').toUpperCase() || 'N/A', inline: false },
+    ],
+    footer: { text: `Logged by: ${username}` },
     timestamp: new Date().toISOString(),
   }
 }
@@ -171,26 +117,14 @@ export function buildCallEmbed(data, username) {
  */
 export function buildPaymentEmbed(data, username) {
   return {
-    title: 'REVENUE COLLECTION LOG',
+    title: 'PAYMENT RECEIVED',
     color: 0x000000,
     fields: [
-      { 
-        name: 'Name', 
-        value: `**${data.client_name.toUpperCase()}**`, 
-        inline: false 
-      },
-      {
-        name: 'Amount',
-        value: `**₹${data.amount.toLocaleString('en-IN')}**`,
-        inline: false
-      },
-      {
-        name: 'Gateway',
-        value: data.provider.toUpperCase(),
-        inline: false
-      },
+      { name: 'Name', value: data.client_name || 'N/A', inline: false },
+      { name: 'Amount', value: `₹${data.amount?.toLocaleString('en-IN') || '0'}`, inline: false },
+      { name: 'Gateway', value: data.provider?.toUpperCase() || 'N/A', inline: false },
     ],
-    footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
+    footer: { text: `Logged by: ${username}` },
     timestamp: new Date().toISOString(),
   }
 }
@@ -200,26 +134,14 @@ export function buildPaymentEmbed(data, username) {
  */
 export function buildChurnEmbed(data, username) {
   return {
-    title: 'REVENUE CHURN LOG',
+    title: 'CLIENT CHURN',
     color: 0x000000,
     fields: [
-      { 
-        name: 'Name', 
-        value: `**${data.client_name.toUpperCase()}**`, 
-        inline: false 
-      },
-      {
-        name: 'Impact',
-        value: `**-₹${data.amount_monthly.toLocaleString('en-IN')}**`,
-        inline: false
-      },
-      {
-        name: 'Reason',
-        value: data.reason ? data.reason.toUpperCase() : 'N/A',
-        inline: false
-      },
-    ].filter(Boolean),
-    footer: { text: `LOGGED BY: ${username.toUpperCase()}` },
+      { name: 'Name', value: data.client_name || 'N/A', inline: false },
+      { name: 'Impact', value: `-₹${data.amount_monthly?.toLocaleString('en-IN') || '0'}`, inline: false },
+      { name: 'Reason', value: data.reason?.toUpperCase() || 'N/A', inline: false },
+    ],
+    footer: { text: `Logged by: ${username}` },
     timestamp: new Date().toISOString(),
   }
 }
@@ -228,29 +150,14 @@ export function buildChurnEmbed(data, username) {
  * Builds a minimalist cancellation/rejection alert.
  */
 export function buildCallStatusEmbed(call, status) {
-  const isCancel = status === 'cancelled'
-  
   return {
-    title: isCancel ? 'SESSION CANCELLED' : 'SESSION REJECTED',
+    title: status === 'cancelled' ? 'CALL CANCELLED' : 'CALL REJECTED',
     color: 0x000000,
     fields: [
-      { 
-        name: 'Name', 
-        value: `**${call.prospect_name.toUpperCase()}**`, 
-        inline: false 
-      },
-      { 
-        name: 'Date & Time', 
-        value: `\`${new Date(call.scheduled_at).toLocaleDateString()}\` | \`${new Date(call.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\``, 
-        inline: false 
-      },
-      { 
-        name: 'Reason', 
-        value: `> ${call.outcome || 'N/A'}`, 
-        inline: false 
-      }
+      { name: 'Name', value: call.prospect_name || 'N/A', inline: false },
+      { name: 'Date & Time', value: new Date(call.scheduled_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }), inline: false },
+      { name: 'Reason', value: call.outcome || 'N/A', inline: false }
     ],
-    footer: { text: `ID: ${call.id.slice(0, 8)}` },
     timestamp: new Date().toISOString(),
   }
 }
