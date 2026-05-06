@@ -42,7 +42,7 @@ export default {
 
     if (error) {
       console.error(error)
-      return interaction.reply({ content: '❌ Error logging deal. Check logs.', ephemeral: true })
+      return interaction.reply({ content: '❌ Error logging deal. Check logs.', flags: 64 })
     }
 
     // Post to #deals
@@ -54,7 +54,7 @@ export default {
 
     await interaction.reply({
       content: `✅ Deal logged — **${clientName}** · ₹${amount.toLocaleString('en-IN')}/mo · ${venture}`,
-      ephemeral: true,
+      flags: 64,
     })
   },
 }

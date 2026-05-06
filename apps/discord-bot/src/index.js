@@ -140,11 +140,19 @@ client.on('interactionCreate', async interaction => {
     await command.execute(interaction, client)
   } catch (error) {
     log(`Error executing /${interaction.commandName}: ${error.message}`, 'error')
-    const msg = { content: '❌ Something went wrong executing this command.', ephemeral: true }
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp(msg)
-    } else {
-      await interaction.reply(msg)
+    
+    // Don't try to reply if the interaction is already dead or unknown
+    if (error.code === 40060 || error.message.includes('Unknown interaction')) return
+
+    const msg = { content: '❌ Something went wrong executing this command.', flags: 64 }
+    try {
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp(msg)
+      } else {
+        await interaction.reply(msg)
+      }
+    } catch (e) {
+      log(`Could not send error message to user: ${e.message}`, 'error')
     }
   }
 })
@@ -200,7 +208,7 @@ client.on('messageCreate', async message => {
   }
 })
 
-client.once('ready', () => {
+client.once('clientReady', () => {
   log(`Logged in as ${client.user.tag}!`)
 })
 

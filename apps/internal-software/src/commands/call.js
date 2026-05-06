@@ -56,7 +56,7 @@ export default {
 
     if (error) {
       console.error(error)
-      return interaction.reply({ content: '❌ Error logging call.', ephemeral: true })
+      return interaction.reply({ content: '❌ Error logging call.', flags: 64 })
     }
 
     const channel = interaction.guild.channels.cache.get(CHANNELS.calls)
@@ -66,7 +66,7 @@ export default {
 
     await interaction.reply({
       content: `✅ Call logged — **${prospect}** · ${status}`,
-      ephemeral: true,
+      flags: 64,
     })
   },
 }

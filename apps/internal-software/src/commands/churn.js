@@ -41,7 +41,7 @@ export default {
 
     if (error) {
       console.error(error)
-      return interaction.reply({ content: '❌ Error logging churn.', ephemeral: true })
+      return interaction.reply({ content: '❌ Error logging churn.', flags: 64 })
     }
 
     const channel = interaction.guild.channels.cache.get(CHANNELS.deals) // Post to deals channel
@@ -51,7 +51,7 @@ export default {
 
     await interaction.reply({
       content: `📉 Churn logged — **${clientName}** · -₹${amount.toLocaleString('en-IN')}/mo · Reason: ${reason}`,
-      ephemeral: true,
+      flags: 64,
     })
   },
 }

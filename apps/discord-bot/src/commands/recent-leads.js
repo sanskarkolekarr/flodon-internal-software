@@ -16,11 +16,11 @@ export default {
       .limit(5)
 
     if (error) {
-      return interaction.reply({ content: '❌ Error fetching leads.', ephemeral: true })
+      return interaction.reply({ content: '❌ Error fetching leads.', flags: 64 })
     }
 
     if (!leads || leads.length === 0) {
-      return interaction.reply({ content: '📭 No website leads found.', ephemeral: true })
+      return interaction.reply({ content: '📭 No website leads found.', flags: 64 })
     }
 
     const embed = new EmbedBuilder()

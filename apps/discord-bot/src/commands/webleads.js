@@ -19,7 +19,7 @@ export default {
     ),
 
   async execute(interaction) {
-    await interaction.deferReply({ ephemeral: true })
+    await interaction.deferReply({ flags: 64 })
 
     const limit = interaction.options.getInteger('limit') || 10
     const since = interaction.options.getString('since') || '7'

@@ -44,7 +44,7 @@ export default {
 
     if (error) {
       console.error(error)
-      return interaction.reply({ content: '❌ Error logging payment.', ephemeral: true })
+      return interaction.reply({ content: '❌ Error logging payment.', flags: 64 })
     }
 
     const channel = interaction.guild.channels.cache.get(CHANNELS.payments)
@@ -52,7 +52,7 @@ export default {
 
     await interaction.reply({
       content: `✅ Payment logged — **${clientName}** · ₹${amount.toLocaleString('en-IN')} via ${provider}`,
-      ephemeral: true,
+      flags: 64,
     })
   },
 }

@@ -1,5 +1,5 @@
 export default {
-  name: 'ready',
+  name: 'clientReady',
   once: true,
   execute(client) {
     console.log(`\n✅ Flodon Bot is online as ${client.user.tag}`)
