@@ -46,7 +46,8 @@ http.createServer(async (req, res) => {
       // Determine Channel: Both lead and cancel now go to #calls
       let channelId = CHANNELS.calls 
       
-      const channel = client.channels.cache.get(channelId)
+      // Use fetch if not in cache (essential after bot restart)
+      const channel = client.channels.cache.get(channelId) || await client.channels.fetch(channelId).catch(() => null)
 
       if (channel) {
         let messageOptions = {}
