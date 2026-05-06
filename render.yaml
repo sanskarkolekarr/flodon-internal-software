@@ -3,9 +3,8 @@ services:
     name: flodon-discord-bot
     env: node
     plan: free
-    rootDir: apps/discord-bot
     buildCommand: npm install
-    startCommand: node src/index.js
+    startCommand: node apps/discord-bot/src/index.js
     envVars:
       - key: NODE_VERSION
         value: 20.x
@@ -14,9 +13,8 @@ services:
     name: flodon-internal-software
     env: node
     plan: free
-    rootDir: apps/internal-software
     buildCommand: npm install
-    startCommand: node src/index.js
+    startCommand: node apps/internal-software/src/index.js
     envVars:
       - key: NODE_VERSION
         value: 20.x
