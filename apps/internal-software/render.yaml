@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: flodon-discord-bot
+    name: flodon-internal-software
     env: node
     plan: free
     buildCommand: npm install
